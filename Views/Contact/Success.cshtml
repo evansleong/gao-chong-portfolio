@@ -1,0 +1,61 @@
+@{
+    ViewData["Title"] = "Payload Routing Successful";
+    var submitter = ViewData["Submitter"] as string ?? "Guest";
+    var isBot = ViewData["IsBot"] as bool? ?? false;
+}
+
+<div class="max-w-2xl mx-auto my-12 text-center font-mono">
+    @if (isBot)
+    {
+        <!-- Bot Caught screen -->
+        <div class="glass-panel border border-red-500/30 bg-red-950/20 rounded-2xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+            <!-- CRT overlay style inside -->
+            <div class="absolute inset-0 bg-gradient-to-b from-red-500/5 to-transparent pointer-events-none"></div>
+            
+            <div class="text-6xl mb-6 select-none animate-bounce">🤖</div>
+            
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-red-400 mb-4">[WARNING] BOT SPAM DETECTED</h1>
+            
+            <p class="text-sm text-slate-300 leading-relaxed mb-8 max-w-md mx-auto">
+                System flagged input telemetry as automated bot activity. The payload has been safely dumped into <span class="text-white font-bold bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">/dev/null</span> to protect compilation resources.
+            </p>
+
+            <div class="flex justify-center gap-4">
+                <a href="/Contact" class="px-5 py-2.5 rounded bg-red-900 text-white font-semibold text-xs hover:bg-red-800 transition">
+                    Retry Submission
+                </a>
+                <a href="/" class="px-5 py-2.5 rounded border border-red-500/30 text-red-400 font-semibold text-xs hover:bg-red-950/40 transition">
+                    Go Back Home
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Real submission screen -->
+        <div class="glass-panel border border-emerald-500/30 bg-emerald-950/10 rounded-2xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent pointer-events-none"></div>
+
+            <div class="text-6xl mb-6 select-none">✉️</div>
+            
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-emerald-400 mb-4">[SUCCESS] Payload Transmitted</h1>
+            
+            <p class="text-slate-300 leading-relaxed mb-6 max-w-md mx-auto">
+                Thank you, <span class="text-white font-semibold underline">@submitter</span>! Message payload successfully routed to Gao Chong's backend gateway router.
+            </p>
+
+            <blockquote class="p-4 rounded-lg bg-emerald-950/30 border border-emerald-500/20 text-xs sm:text-sm text-emerald-300 max-w-md mx-auto mb-8 italic">
+                "Message received. If I don't reply within 24 hours, I'm probably debugging a missing semicolon."
+            </blockquote>
+
+            <div class="flex justify-center gap-4">
+                <a href="/" class="px-5 py-2.5 rounded bg-emerald-800 text-white font-semibold text-xs hover:bg-emerald-700 transition">
+                    Return to gateway
+                </a>
+                <a href="/Resume" class="px-5 py-2.5 rounded border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-900 transition">
+                    Query Resume database
+                </a>
+            </div>
+        </div>
+    }
+</div>

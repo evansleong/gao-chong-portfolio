@@ -1,0 +1,46 @@
+name: Build and Deploy to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: gao-chong-portfolio  # Replace with your actual Azure Web App name
+  DOTNET_VERSION: '8.0.x'                 # Target .NET version
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the code
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # Step 2: Setup .NET SDK
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # Step 3: Restore NuGet Dependencies
+      - name: Restore NuGet Packages
+        run: dotnet restore
+
+      # Step 4: Build project in Release mode
+      - name: Build Project
+        run: dotnet build --configuration Release --no-restore
+
+      # Step 5: Publish application assets
+      - name: Publish Artifacts
+        run: dotnet publish --configuration Release --no-restore --output ./publish
+
+      # Step 6: Deploy to Azure Web App via Publish Profile
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISH_PROFILE }}
+          package: ./publish

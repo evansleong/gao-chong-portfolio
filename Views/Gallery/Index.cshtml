@@ -1,0 +1,137 @@
+@model GaoChongPortfolio.Models.ProjectViewModel
+
+@{
+    ViewData["Title"] = "Project Registry & Hardware builds";
+}
+
+<div class="space-y-8">
+    <!-- Intro Header -->
+    <div class="max-w-3xl">
+        <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">Project Portfolio &amp; Engineering Gallery</h1>
+        <p class="text-slate-400">
+            A registry of software engineering, cloud systems architecture, hardware workstations, and automotive diagnostic telemetry scripts.
+        </p>
+    </div>
+
+    <!-- Interactive Category Filter Tabs -->
+    <div class="flex flex-wrap gap-2 pb-2 border-b border-slate-800/80">
+        @foreach (var cat in Model.Categories)
+        {
+            <button 
+                onclick="filterCategory('@cat')" 
+                id="tab-@cat.Replace(" ", "-")" 
+                class="tab-btn hacker-override px-4 py-2 rounded-lg text-xs font-mono border transition-all duration-200 
+                @(cat == "All" 
+                    ? "bg-indigo-600 border-indigo-500 text-white shadow-md shadow-indigo-600/10" 
+                    : "bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-white")">
+                @cat
+            </button>
+        }
+    </div>
+
+    <!-- Project Gallery Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projects-grid">
+        @foreach (var item in Model.Projects)
+        {
+            <div 
+                data-category="@item.Category" 
+                class="project-card group bg-slate-900/60 border border-slate-800/80 rounded-xl overflow-hidden shadow-lg hover:border-slate-700/80 transition-all duration-300 flex flex-col justify-between hover:shadow-2xl hover:shadow-indigo-950/20 transform hover:-translate-y-1">
+                
+                <!-- Card Image with Hover effect -->
+                <div class="relative h-48 bg-slate-950 flex items-center justify-center overflow-hidden border-b border-slate-800/50">
+                    <!-- Simulated Vector Diagram or Hardware outline (looks cleaner than empty broken images) -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-slate-950 via-slate-900 to-indigo-950/20 opacity-80 z-0"></div>
+                    
+                    <!-- Schematic Grid Line Overlay -->
+                    <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:14px_14px] opacity-25 z-0"></div>
+                    
+                    <!-- Category Identifier Tag -->
+                    <span class="absolute top-4 left-4 px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-slate-950/80 border border-slate-800 text-indigo-400 z-10">
+                        @item.Category
+                    </span>
+
+                    <!-- Main Vector Core Icon for visual WOW -->
+                    <div class="z-10 text-center select-none pointer-events-none transform group-hover:scale-110 transition duration-300">
+                        @if (item.Category == "Web Projects")
+                        {
+                            <div class="text-4xl">🌐</div>
+                        }
+                        else if (item.Category == "Cloud Infrastructure")
+                        {
+                            <div class="text-4xl">☁️</div>
+                        }
+                        else if (item.Category == "Hardware Builds")
+                        {
+                            <div class="text-4xl">🖥️</div>
+                        }
+                        else if (item.Category == "Automotive Tinkering")
+                        {
+                            <div class="text-4xl">🚗</div>
+                        }
+                        <div class="text-[10px] text-slate-500 font-mono mt-1">@item.Id.ToUpper()</div>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                    <div class="space-y-2">
+                        <h3 class="text-lg font-bold text-white group-hover:text-indigo-400 transition">@item.Title</h3>
+                        <p class="text-xs sm:text-sm text-slate-400 line-clamp-3 leading-relaxed">@item.Description</p>
+                    </div>
+
+                    <!-- Tech Stack badges -->
+                    <div class="flex flex-wrap gap-1">
+                        @foreach (var tech in item.TechStack)
+                        {
+                            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">@tech</span>
+                        }
+                    </div>
+                </div>
+
+                <!-- Card Footer / Witty statistics overlay -->
+                <div class="px-5 py-3 bg-slate-950/80 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono">
+                    <span class="text-slate-500">Telemetry:</span>
+                    <span class="text-indigo-400 font-semibold text-right truncate max-w-[200px]" title="@item.HumorousStat">@item.HumorousStat</span>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filterCategory(category) {
+            console.log(`[SYS] Executing client-side grid filter: '${category}'`);
+            
+            // Toggle active styles on buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.className = "tab-btn hacker-override px-4 py-2 rounded-lg text-xs font-mono border transition-all duration-200 bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-white";
+            });
+
+            // Set styling on selected button
+            const activeId = `tab-${category.replace(/ /g, '-')}`;
+            const activeBtn = document.getElementById(activeId);
+            if (activeBtn) {
+                activeBtn.className = "tab-btn hacker-override px-4 py-2 rounded-lg text-xs font-mono border transition-all duration-200 bg-indigo-600 border-indigo-500 text-white shadow-md shadow-indigo-600/10";
+            }
+
+            // Hide/Show cards
+            const cards = document.querySelectorAll('.project-card');
+            cards.forEach(card => {
+                const cardCat = card.getAttribute('data-category');
+                if (category === 'All' || cardCat.toLowerCase() === category.toLowerCase()) {
+                    card.style.display = 'flex';
+                    card.style.opacity = '1';
+                    card.style.transform = 'scale(1)';
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 150);
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,53 @@
+@{
+    ViewData["Title"] = "System Exception Detour";
+    var statusCode = ViewData["StatusCode"] as int?;
+    var errorTitle = ViewData["ErrorTitle"] as string ?? "Fatal Thread Exception";
+    var errorMessage = ViewData["ErrorMessage"] as string ?? "An unhandled exception occurred in the web request pipeline.";
+}
+
+<div class="max-w-3xl mx-auto my-12">
+    <!-- Witty OS Terminal Crash Window -->
+    <div class="bg-red-950/80 border border-red-500/50 rounded-lg p-6 md:p-8 font-mono shadow-2xl relative overflow-hidden">
+        <!-- CRT style scanner light lines -->
+        <div class="absolute inset-0 bg-gradient-to-b from-red-500/5 to-transparent pointer-events-none"></div>
+
+        <div class="flex items-center space-x-2 border-b border-red-500/30 pb-3 mb-6">
+            <span class="w-3.5 h-3.5 rounded-full bg-red-500 animate-pulse"></span>
+            <span class="text-sm font-semibold text-red-400">CRITICAL_SYSTEM_CRASH_DETECTOR (Code: @(statusCode ?? 500))</span>
+        </div>
+
+        <h1 class="text-2xl md:text-3xl font-bold text-red-400 mb-4">@errorTitle</h1>
+        
+        <p class="text-slate-300 leading-relaxed mb-6">
+            @errorMessage
+        </p>
+
+        <!-- Simulated Stack Trace -->
+        <div class="bg-black/40 border border-red-500/20 rounded p-4 mb-6 text-xs text-red-300 overflow-x-auto space-y-1">
+            <div>[FATAL] System.NullReferenceException: Object reference not set to an instance of an object.</div>
+            <div>   at GaoChongPortfolio.Controllers.RecruiterSimulator.AssessCandidate(String skillSet) in C:\Source\RecruiterSimulator.cs:line 104</div>
+            <div>   at System.Web.Mvc.ActionMethodDispatcher.Execute(ControllerBase controller, Object[] parameters)</div>
+            <div>   at System.Web.Mvc.ReflectedActionDescriptor.Execute(ControllerContext controllerContext, IDictionary`2 parameters)</div>
+            <div>[INFO] Troubleshooting code: MISSED_SEMICOLON_OR_WRONG_ROUTE</div>
+            <div>[INFO] Request ID: <span class="text-white">@ViewData["RequestId"]</span></div>
+        </div>
+
+        <!-- Call to Action options -->
+        <h2 class="text-sm font-bold text-red-400 mb-3">Recommended Troubleshooting Options:</h2>
+        <ul class="list-disc pl-5 text-sm text-slate-300 space-y-2 mb-8">
+            <li>Re-route traffic back to the <a href="/" class="text-indigo-400 hover:text-indigo-300 underline font-semibold">Home Page / Gateway</a>.</li>
+            <li>Inspect the <a href="/Resume" class="text-indigo-400 hover:text-indigo-300 underline font-semibold">Resume Console</a> to verify if Gao Chong possesses the skillset you need.</li>
+            <li>Submit a bug report via the <a href="/Contact" class="text-indigo-400 hover:text-indigo-300 underline font-semibold">Contact Payload Form</a>.</li>
+            <li>Check if your server's coolant level is below 99%. If so, replenish with coffee.</li>
+        </ul>
+
+        <div class="flex flex-wrap gap-4">
+            <a href="/" class="px-5 py-2.5 rounded bg-red-800 text-white font-semibold text-sm hover:bg-red-700 transition shadow-lg shadow-red-950/50">
+                Execute System.Restart()
+            </a>
+            <a href="/Resume" class="px-5 py-2.5 rounded border border-red-500/30 text-red-400 font-semibold text-sm hover:bg-red-950/40 transition">
+                Open Terminal Diagnostics
+            </a>
+        </div>
+    </div>
+</div>

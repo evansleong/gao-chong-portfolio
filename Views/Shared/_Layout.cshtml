@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Gao Chong | Senior Full-Stack Engineer</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    },
+                    colors: {
+                        hackerGreen: '#00ff66',
+                        hackerBg: '#0a0f0d'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom Retro/Hacker CSS & Keyframes -->
+    <style>
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Hacker mode CRT Scanline Filter */
+        .hacker-mode {
+            background-color: #050805 !important;
+            color: #00ff66 !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            text-shadow: 0 0 5px rgba(0, 255, 102, 0.8);
+        }
+
+        .hacker-mode *:not(button):not(a):not(input):not(textarea):not(.hacker-override) {
+            color: #00ff66 !important;
+            border-color: #00ff66 !important;
+            background-color: transparent !important;
+        }
+
+        .hacker-mode input, .hacker-mode textarea, .hacker-mode select {
+            border: 1px solid #00ff66 !important;
+            background: #050805 !important;
+            color: #00ff66 !important;
+            outline: none !important;
+        }
+
+        /* CRT Scanlines Overlay */
+        .hacker-mode::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 99999;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        .hacker-mode::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: rgba(18, 16, 16, 0.1);
+            opacity: 0;
+            z-index: 99998;
+            pointer-events: none;
+            animation: crt-flicker 0.15s infinite;
+        }
+
+        @@keyframes crt-flicker {
+            0% { opacity: 0.27; }
+            50% { opacity: 0.29; }
+            100% { opacity: 0.26; }
+        }
+
+        /* Glassmorphism utility classes */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-navbar {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased transition-all duration-300">
+
+    <!-- Developer Preloader Screen -->
+    <div id="preloader" class="fixed inset-0 bg-slate-900 z-[100000] flex flex-col items-center justify-center font-mono p-4">
+        <div class="max-w-md w-full glass-panel rounded-lg p-6 border border-slate-700 shadow-2xl relative overflow-hidden">
+            <!-- Simulated window bar -->
+            <div class="flex items-center space-x-2 border-b border-slate-700 pb-3 mb-4">
+                <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                <span class="text-xs text-slate-400 select-none ml-2">GaoChong_Compiler_Preloader.sh</span>
+            </div>
+            <!-- Log output area -->
+            <div id="preloader-logs" class="text-xs space-y-2 h-48 overflow-y-auto mb-4 scrollbar-none text-green-400">
+                <!-- Log entries will be written sequentially by JS -->
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div id="preloader-progress" class="bg-indigo-500 h-1.5 w-0 transition-all duration-100"></div>
+            </div>
+            <div class="flex justify-between items-center mt-3">
+                <span class="text-[10px] text-slate-500">Status: Bootstrapping...</span>
+                <span id="preloader-percent" class="text-xs font-bold text-slate-300">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="sticky top-0 z-50 glass-navbar w-full">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- Retro visual/avatar placeholder -->
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center font-bold text-white shadow-md shadow-indigo-500/20">
+                    GC
+                </div>
+                <a href="/" class="text-lg font-bold tracking-tight text-white flex items-center">
+                    Gao Chong <span class="text-xs font-mono bg-slate-800 px-1.5 py-0.5 rounded text-indigo-400 ml-2 border border-slate-700">v1.0.4</span>
+                </a>
+            </div>
+
+            <!-- Nav Links -->
+            <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <a href="/" class="text-slate-300 hover:text-white hover:underline transition">Home</a>
+                <a href="/Resume" class="text-slate-300 hover:text-white hover:underline transition">Resume &amp; Terminal</a>
+                <a href="/Gallery" class="text-slate-300 hover:text-white hover:underline transition">Projects &amp; Gallery</a>
+                <a href="/Contact" class="text-slate-300 hover:text-white hover:underline transition">Contact</a>
+            </div>
+
+            <!-- System Action Controls (Theme and Easter Egg) -->
+            <div class="flex items-center space-x-4">
+                <!-- Easter Egg Hacker mode floating key -->
+                <button onclick="toggleHackerMode()" class="hacker-override px-3 py-1.5 rounded-md border border-slate-700 bg-slate-800 text-xs font-mono text-slate-300 hover:text-green-400 hover:border-green-500/50 hover:bg-slate-900 transition flex items-center space-x-1.5" title="CompileRetroMode()">
+                    <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse inline-block"></span>
+                    <span>hacker_mode</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Navigation Drawer (For responsive display) -->
+    <div class="md:hidden flex justify-around bg-slate-900/90 border-t border-slate-800 py-3 text-xs fixed bottom-0 left-0 right-0 z-50 backdrop-blur-md">
+        <a href="/" class="text-slate-400 hover:text-white flex flex-col items-center space-y-1">
+            <span>🏠</span>
+            <span>Home</span>
+        </a>
+        <a href="/Resume" class="text-slate-400 hover:text-white flex flex-col items-center space-y-1">
+            <span>💻</span>
+            <span>Resume</span>
+        </a>
+        <a href="/Gallery" class="text-slate-400 hover:text-white flex flex-col items-center space-y-1">
+            <span>🖼️</span>
+            <span>Gallery</span>
+        </a>
+        <a href="/Contact" class="text-slate-400 hover:text-white flex flex-col items-center space-y-1">
+            <span>✉️</span>
+            <span>Contact</span>
+        </a>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 mb-16 md:mb-0">
+        @RenderBody()
+    </main>
+
+    <!-- Professional & Humorous Footer -->
+    <footer class="w-full bg-slate-900/60 border-t border-slate-800/80 py-8 text-center text-sm text-slate-400 font-mono mt-auto">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+                <p>&copy; @DateTime.Now.Year Gao Chong. All Rights Reserved.</p>
+                <p class="text-xs text-slate-500 mt-1">Built with ASP.NET Core MVC &amp; Tailwind. Semicolons are carefully protected by local firewalls.</p>
+            </div>
+            <div class="text-xs text-slate-500 md:text-right">
+                <div>Environment: <span class="text-emerald-400">Production</span></div>
+                <div>Status: <span class="text-emerald-400">99.8% Coolant Level</span></div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap/Vanilla Javascript logic for Preloader and Hacker Mode Toggle -->
+    <script>
+        // Hacker mode localstorage states
+        function initHackerMode() {
+            if (localStorage.getItem('hacker_mode') === 'true') {
+                document.body.classList.add('hacker-mode');
+            }
+        }
+
+        function toggleHackerMode() {
+            const isActive = document.body.classList.toggle('hacker-mode');
+            localStorage.setItem('hacker_mode', isActive);
+            console.log(`[SYS] Hacker mode toggled: ${isActive}`);
+        }
+
+        // Loading Screen logs
+        const loadMessages = [
+            { text: "[LOAD] Initializing developer compiler assets...", delay: 100 },
+            { text: "[LOAD] Linking Razor views to MVC model definitions...", delay: 250 },
+            { text: "[WARN] 147 unreferenced NuGet packages found in cache. Ignoring.", delay: 400 },
+            { text: "[LOAD] Decompiling black-box Sitecore assemblies with ILSpy...", delay: 600 },
+            { text: "[INFO] Parsing Flutter & Dart OCR event bindings...", delay: 800 },
+            { text: "[LOAD] Verifying custom PC hardware (MSI MB / Segotep PSU)...", delay: 1050 },
+            { text: "[SUCCESS] CPU Pins verified: 0 bent. Temperature nominal (42°C).", delay: 1200 },
+            { text: "[INFO] Calibrating Engine Control Unit (ECU) parameters...", delay: 1350 },
+            { text: "[LOAD] Injecting witty developer joke components...", delay: 1500 },
+            { text: "[SUCCESS] Gao Chong portfolio compilation completed. Rendering UI...", delay: 1700 }
+        ];
+
+        function runPreloader() {
+            // Check session storage to avoid double loaders in the same session
+            if (sessionStorage.getItem('preloader_completed') === 'true') {
+                document.getElementById('preloader').style.display = 'none';
+                return;
+            }
+
+            const container = document.getElementById('preloader-logs');
+            const progressBar = document.getElementById('preloader-progress');
+            const percentLabel = document.getElementById('preloader-percent');
+
+            loadMessages.forEach((msg, idx) => {
+                setTimeout(() => {
+                    const log = document.createElement('div');
+                    log.className = "flex items-start space-x-2";
+                    log.innerHTML = `<span class="text-slate-500">[${new Date().toLocaleTimeString()}]</span><span>${msg.text}</span>`;
+                    container.appendChild(log);
+                    container.scrollTop = container.scrollHeight;
+
+                    // Progress bar matching log items percentage
+                    const percent = Math.round(((idx + 1) / loadMessages.length) * 100);
+                    progressBar.style.width = `${percent}%`;
+                    percentLabel.innerText = `${percent}%`;
+
+                    if (idx === loadMessages.length - 1) {
+                        setTimeout(() => {
+                            const preloader = document.getElementById('preloader');
+                            preloader.style.opacity = '0';
+                            preloader.style.transition = 'opacity 0.5s ease';
+                            setTimeout(() => {
+                                preloader.style.display = 'none';
+                                sessionStorage.setItem('preloader_completed', 'true');
+                            }, 500);
+                        }, 600);
+                    }
+                }, msg.delay);
+            });
+        }
+
+        // Initialize elements
+        window.addEventListener('DOMContentLoaded', () => {
+            initHackerMode();
+            runPreloader();
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

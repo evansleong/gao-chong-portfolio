@@ -1,0 +1,85 @@
+@model GaoChongPortfolio.Models.ContactViewModel
+
+@{
+    ViewData["Title"] = "Establish Ping Routing (Contact)";
+}
+
+<div class="max-w-2xl mx-auto my-8">
+    <div class="glass-panel border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+        
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="inline-block text-xs font-mono px-2 py-1 rounded bg-indigo-950/40 text-indigo-400 border border-indigo-500/20 mb-2">
+                ROUTE_TARGET: /Contact/SubmitPayload
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white">Establish Ping Route</h1>
+            <p class="text-sm text-slate-400 mt-1">
+                Transmit a message payload. Strict C# validation is running on the backend compiler.
+            </p>
+        </div>
+
+        <form asp-controller="Contact" asp-action="Index" method="post" class="space-y-6">
+            @Html.AntiForgeryToken()
+
+            <!-- Validation Summary (Only visible if model state has errors) -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="p-4 rounded-lg bg-red-950/30 border border-red-500/20 text-xs text-red-300 font-mono space-y-1">
+                    <div class="font-bold text-red-400">[COMPILER_ERROR] Form validation failed:</div>
+                    <div asp-validation-summary="All" class="list-disc pl-5"></div>
+                </div>
+            }
+
+            <!-- Honeypot Field (Bot bait, absolutely positioned offscreen) -->
+            <div class="absolute left-[-9999px] top-[-9999px] h-0 w-0 overflow-hidden opacity-0 pointer-events-none">
+                <label asp-for="Honeypot">Do not fill this field if you are human</label>
+                <input asp-for="Honeypot" autocomplete="off" tabindex="-1" />
+            </div>
+
+            <!-- Name Field -->
+            <div class="space-y-2">
+                <label asp-for="Name" class="block text-xs font-mono text-indigo-300 uppercase tracking-wider">Sender Name / System ID</label>
+                <input 
+                    asp-for="Name" 
+                    placeholder="e.g. Recruiter Smith" 
+                    class="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-800 focus:border-indigo-500 text-white outline-none font-mono text-sm transition focus:ring-1 focus:ring-indigo-500/50" />
+                <span asp-validation-for="Name" class="block text-xs text-red-400 font-mono mt-1"></span>
+            </div>
+
+            <!-- Email Field -->
+            <div class="space-y-2">
+                <label asp-for="Email" class="block text-xs font-mono text-indigo-300 uppercase tracking-wider">Reply IP/Email Endpoint</label>
+                <input 
+                    asp-for="Email" 
+                    placeholder="e.g. recruiter@@enterprise.com" 
+                    class="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-800 focus:border-indigo-500 text-white outline-none font-mono text-sm transition focus:ring-1 focus:ring-indigo-500/50" />
+                <span asp-validation-for="Email" class="block text-xs text-red-400 font-mono mt-1"></span>
+            </div>
+
+            <!-- Message Field -->
+            <div class="space-y-2">
+                <label asp-for="Message" class="block text-xs font-mono text-indigo-300 uppercase tracking-wider">Message Payload</label>
+                <textarea 
+                    asp-for="Message" 
+                    rows="5"
+                    placeholder="Type message text here (min 10 characters)..." 
+                    class="w-full px-4 py-3 rounded-lg bg-slate-900 border border-slate-800 focus:border-indigo-500 text-white outline-none font-mono text-sm transition focus:ring-1 focus:ring-indigo-500/50 resize-y"></textarea>
+                <span asp-validation-for="Message" class="block text-xs text-red-400 font-mono mt-1"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+                type="submit" 
+                class="hacker-override w-full px-6 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm tracking-wider uppercase transition shadow-lg shadow-indigo-600/10 hover:shadow-indigo-600/30 transform hover:-translate-y-0.5">
+                Transmit Payload
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Client side validation support files (standard jQuery validation packages if used, but vanilla scripts work too) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+}
