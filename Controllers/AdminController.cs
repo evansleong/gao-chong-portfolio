@@ -262,7 +262,8 @@ namespace GaoChongPortfolio.Controllers
                 }
 
                 // Create absolute uploads path inside wwwroot/images/uploads/
-                var uploadsDir = Path.Combine(_env.WebRootPath, "images", "uploads");
+                var rootPath = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
+                var uploadsDir = Path.Combine(rootPath, "images", "uploads");
                 if (!Directory.Exists(uploadsDir))
                 {
                     Directory.CreateDirectory(uploadsDir);

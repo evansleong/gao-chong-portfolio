@@ -12,8 +12,9 @@ namespace GaoChongPortfolio.Services
 
         public PortfolioService(IWebHostEnvironment webHostEnvironment)
         {
-            // Resolve path to wwwroot/data/portfolio.json
-            var dataDir = Path.Combine(webHostEnvironment.WebRootPath, "data");
+            // Resolve path to wwwroot gracefully even if WebRootPath is null on early startup
+            var rootPath = webHostEnvironment.WebRootPath ?? Path.Combine(webHostEnvironment.ContentRootPath, "wwwroot");
+            var dataDir = Path.Combine(rootPath, "data");
             
             // Ensure directory exists
             if (!Directory.Exists(dataDir))
