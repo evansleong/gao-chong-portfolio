@@ -12,9 +12,18 @@ namespace GaoChongPortfolio.Services
 
         public PortfolioService(IWebHostEnvironment webHostEnvironment)
         {
-            // Resolve path to wwwroot gracefully even if WebRootPath is null on early startup
-            var rootPath = webHostEnvironment.WebRootPath ?? Path.Combine(webHostEnvironment.ContentRootPath, "wwwroot");
-            var dataDir = Path.Combine(rootPath, "data");
+            string dataDir;
+            if (Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID") != null)
+            {
+                // Azure persistent writeable volume
+                dataDir = "/home/site/data";
+            }
+            else
+            {
+                // Local development fallback
+                var rootPath = webHostEnvironment.WebRootPath ?? Path.Combine(webHostEnvironment.ContentRootPath, "wwwroot");
+                dataDir = Path.Combine(rootPath, "data");
+            }
             
             // Ensure directory exists
             if (!Directory.Exists(dataDir))

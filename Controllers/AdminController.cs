@@ -261,9 +261,17 @@ namespace GaoChongPortfolio.Controllers
                     return View("EditProject", model);
                 }
 
-                // Create absolute uploads path inside wwwroot/images/uploads/
-                var rootPath = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
-                var uploadsDir = Path.Combine(rootPath, "images", "uploads");
+                // Create absolute uploads path in persistent directory
+                string uploadsDir;
+                if (Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID") != null)
+                {
+                    uploadsDir = "/home/site/uploads";
+                }
+                else
+                {
+                    var rootPath = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
+                    uploadsDir = Path.Combine(rootPath, "images", "uploads");
+                }
                 if (!Directory.Exists(uploadsDir))
                 {
                     Directory.CreateDirectory(uploadsDir);
