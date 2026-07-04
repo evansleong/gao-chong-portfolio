@@ -1,0 +1,75 @@
+@model GaoChongPortfolio.Models.ExperienceItem
+
+@{
+    var index = ViewBag.Index as int?;
+    ViewData["Title"] = index.HasValue ? "Edit Experience Entry" : "Create Experience Entry";
+}
+
+<div class="max-w-2xl mx-auto my-8">
+    <div class="glass-panel border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl relative">
+        
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-extrabold text-white">@(index.HasValue ? "Edit Experience Entry" : "Create Experience Entry")</h1>
+            <p class="text-xs text-slate-400 font-mono mt-1">Configure telemetry nodes in the professional timeline.</p>
+        </div>
+
+        <form asp-controller="Admin" asp-action="SaveExperience" method="post" class="space-y-4">
+            @Html.AntiForgeryToken()
+
+            @if (index.HasValue)
+            {
+                <input type="hidden" name="index" value="@index.Value" />
+            }
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Company -->
+                <div class="space-y-1">
+                    <label asp-for="Company" class="block text-[11px] font-mono text-indigo-300 uppercase">Company Name</label>
+                    <input asp-for="Company" class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-white text-xs sm:text-sm outline-none focus:border-indigo-500 transition" placeholder="e.g. Google Inc." />
+                    <span asp-validation-for="Company" class="block text-[10px] text-red-400 font-mono"></span>
+                </div>
+
+                <!-- Role -->
+                <div class="space-y-1">
+                    <label asp-for="Role" class="block text-[11px] font-mono text-indigo-300 uppercase">Role / Job Title</label>
+                    <input asp-for="Role" class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-white text-xs sm:text-sm outline-none focus:border-indigo-500 transition" placeholder="e.g. Senior Backend Dev" />
+                    <span asp-validation-for="Role" class="block text-[10px] text-red-400 font-mono"></span>
+                </div>
+            </div>
+
+            <!-- Duration -->
+            <div class="space-y-1">
+                <label asp-for="Duration" class="block text-[11px] font-mono text-indigo-300 uppercase">Duration Date Range</label>
+                <input asp-for="Duration" class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-white text-xs sm:text-sm outline-none focus:border-indigo-500 transition" placeholder="e.g. 2024 - Present" />
+                <span asp-validation-for="Duration" class="block text-[10px] text-red-400 font-mono"></span>
+            </div>
+
+            <!-- Bullet Points Raw input -->
+            <div class="space-y-1">
+                <label class="block text-[11px] font-mono text-indigo-300 uppercase">Key Achievements (One per line)</label>
+                <textarea 
+                    name="bulletPointsRaw" 
+                    rows="6" 
+                    class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-white text-xs outline-none focus:border-indigo-500 transition font-sans" 
+                    placeholder="Wrote robust C# controllers&#10;Mitigated memory leaks&#10;Integrated AWS S3 APIs">@string.Join("\r\n", Model.BulletPoints)</textarea>
+            </div>
+
+            <!-- Humorous Takeaway -->
+            <div class="space-y-1">
+                <label asp-for="HumorousTakeaway" class="block text-[11px] font-mono text-indigo-300 uppercase">Humorous Takeaway Note</label>
+                <input asp-for="HumorousTakeaway" class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-white text-xs sm:text-sm outline-none focus:border-indigo-500 transition" placeholder="No CPU pins were bent in production." />
+                <span asp-validation-for="HumorousTakeaway" class="block text-[10px] text-red-400 font-mono"></span>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-slate-850 mt-6">
+                <a href="/Admin" class="px-4 py-2 border border-slate-700 text-slate-300 text-xs font-mono rounded hover:bg-slate-900 hover:text-white transition">
+                    Cancel
+                </a>
+                <button type="submit" class="hacker-override px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded transition">
+                    Save Telemetry Node
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

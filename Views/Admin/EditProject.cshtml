@@ -1,0 +1,114 @@
+@model GaoChongPortfolio.Models.ProjectEditModel
+
+@{
+    var isEdit = ViewBag.IsEdit as bool? ?? false;
+    ViewData["Title"] = isEdit ? "Edit Project Entry" : "Register Project Entry";
+}
+
+<div class="max-w-2xl mx-auto my-8">
+    <div class="glass-panel border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl relative">
+        
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-extrabold text-white">@(isEdit ? "Edit Project Details" : "Register New Project")</h1>
+            <p class="text-xs text-slate-400 font-mono mt-1">Configure project details and upload diagrams/workstation photos.</p>
+        </div>
+
+        <form asp-controller="Admin" asp-action="SaveProject" method="post" enctype="multipart/form-data" class="space-y-4">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" name="isEditMode" value="@(isEdit ? "true" : "false")" />
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Project Key / ID -->
+                <div class="space-y-1">
+                    <label asp-for="Id" class="block text-[11px] font-mono text-indigo-300 uppercase">Project Key (Unique URL ID)</label>
+                    @if (isEdit)
+                    {
+                        <input asp-for="Id" readonly class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-slate-500 text-xs sm:text-sm font-mono cursor-not-allowed outline-none" />
+                    }
+                    else
+                    {
+                        <input asp-for="Id" class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-white text-xs sm:text-sm font-mono outline-none focus:border-indigo-500 transition" placeholder="e.g. cloud-infra-ocr" />
+                    }
+                    <span asp-validation-for="Id" class="block text-[10px] text-red-400 font-mono"></span>
+                </div>
+
+                <!-- Display Title -->
+                <div class="space-y-1">
+                    <label asp-for="Title" class="block text-[11px] font-mono text-indigo-300 uppercase">Display Title</label>
+                    <input asp-for="Title" class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-white text-xs sm:text-sm outline-none focus:border-indigo-500 transition" placeholder="e.g. AWS OCR Pipeline" />
+                    <span asp-validation-for="Title" class="block text-[10px] text-red-400 font-mono"></span>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="space-y-1">
+                <label asp-for="Description" class="block text-[11px] font-mono text-indigo-300 uppercase">Description (Summary)</label>
+                <textarea asp-for="Description" rows="4" class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-white text-xs outline-none focus:border-indigo-500 transition" placeholder="Summarize features, dependencies..."></textarea>
+                <span asp-validation-for="Description" class="block text-[10px] text-red-400 font-mono"></span>
+            </div>
+
+            <!-- Image File Upload -->
+            <div class="space-y-1 p-4 rounded bg-slate-900/40 border border-slate-850">
+                <label asp-for="ImageFile" class="block text-[11px] font-mono text-indigo-300 uppercase font-semibold">Upload Photo/Diagram</label>
+                <input asp-for="ImageFile" type="file" class="w-full text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-950 file:text-indigo-400 hover:file:bg-indigo-900 file:cursor-pointer mt-1" />
+                <span asp-validation-for="ImageFile" class="block text-[10px] text-red-400 font-mono"></span>
+                <p class="text-[10px] text-slate-500 font-mono mt-1">Upload a JPG, PNG, WEBP, or SVG file. Max size 2MB.</p>
+                
+                @if (isEdit && !string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <div class="mt-3 flex items-center space-x-2">
+                        <span class="text-[10px] text-slate-500 font-mono">Current Registry Image:</span>
+                        <a href="@Model.ImageUrl" target="_blank" class="text-[10px] text-indigo-400 hover:underline font-mono truncate max-w-[200px]">@Model.ImageUrl</a>
+                    </div>
+                }
+            </div>
+
+            <!-- Fallback Image URL (Hidden or optional) -->
+            <div class="space-y-1">
+                <label asp-for="ImageUrl" class="block text-[11px] font-mono text-indigo-300 uppercase">Or Fallback Image URL (e.g. external link)</label>
+                <input asp-for="ImageUrl" class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-white text-xs sm:text-sm outline-none focus:border-indigo-500 transition" placeholder="e.g. /images/projects/default.png" />
+                <span asp-validation-for="ImageUrl" class="block text-[10px] text-red-400 font-mono"></span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Category Select -->
+                <div class="space-y-1">
+                    <label asp-for="Category" class="block text-[11px] font-mono text-indigo-300 uppercase">Registry Category</label>
+                    <select asp-for="Category" class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-white text-xs sm:text-sm outline-none focus:border-indigo-500 transition">
+                        <option value="Web Projects">Web Projects</option>
+                        <option value="Cloud Infrastructure">Cloud Infrastructure</option>
+                        <option value="Hardware Builds">Hardware Builds</option>
+                        <option value="Automotive Tinkering">Automotive Tinkering</option>
+                    </select>
+                    <span asp-validation-for="Category" class="block text-[10px] text-red-400 font-mono"></span>
+                </div>
+
+                <!-- Tech Stack Comma-separated -->
+                <div class="space-y-1">
+                    <label asp-for="TechStackRaw" class="block text-[11px] font-mono text-indigo-300 uppercase">Tech Stack (comma-separated)</label>
+                    <input asp-for="TechStackRaw" class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-white text-xs sm:text-sm font-mono outline-none focus:border-indigo-500 transition" placeholder="e.g. C#, React, Docker" />
+                    <span asp-validation-for="TechStackRaw" class="block text-[10px] text-red-400 font-mono"></span>
+                </div>
+            </div>
+
+            <!-- Humorous Stat -->
+            <div class="space-y-1">
+                <label asp-for="HumorousStat" class="block text-[11px] font-mono text-indigo-300 uppercase">Humorous Telemetry/Diagnostic Stat</label>
+                <input asp-for="HumorousStat" class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-800 text-white text-xs sm:text-sm outline-none focus:border-indigo-500 transition" placeholder="e.g. CPU pins bent: 0." />
+                <span asp-validation-for="HumorousStat" class="block text-[10px] text-red-400 font-mono"></span>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-end gap-3 pt-4 border-t border-slate-850 mt-6">
+                <a href="/Admin" class="px-4 py-2 border border-slate-700 text-slate-300 text-xs font-mono rounded hover:bg-slate-900 hover:text-white transition">
+                    Cancel
+                </a>
+                <button type="submit" class="hacker-override px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider rounded transition">
+                    Register Project Entity
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

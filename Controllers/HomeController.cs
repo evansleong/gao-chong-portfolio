@@ -1,21 +1,25 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using GaoChongPortfolio.Models;
+using GaoChongPortfolio.Services;
 
 namespace GaoChongPortfolio.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IPortfolioService _portfolioService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IPortfolioService portfolioService)
         {
             _logger = logger;
+            _portfolioService = portfolioService;
         }
 
         public IActionResult Index()
         {
-            return View();
+            var data = _portfolioService.GetData();
+            return View(data.Bio);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

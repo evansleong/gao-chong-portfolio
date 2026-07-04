@@ -1,14 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
 using GaoChongPortfolio.Models;
+using GaoChongPortfolio.Services;
+using System.Text;
 
 namespace GaoChongPortfolio.Controllers
 {
     public class ResumeController : Controller
     {
+        private readonly IPortfolioService _portfolioService;
+
+        public ResumeController(IPortfolioService portfolioService)
+        {
+            _portfolioService = portfolioService;
+        }
+
         public IActionResult Index()
         {
-            var model = GetResumeData();
-            return View(model);
+            var data = _portfolioService.GetData();
+            
+            // Build the view model dynamically
+            var viewModel = new ResumeViewModel
+            {
+                Experiences = data.Experiences,
+                SkillGroups = GetSkillGroups(), // Skills can remain statically grouped or loaded
+                Certifications = GetCertifications()
+            };
+
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -21,20 +39,35 @@ namespace GaoChongPortfolio.Controllers
 
             var cleanCmd = cmd.Trim().ToLower();
             string response;
+            var data = _portfolioService.GetData();
 
             switch (cleanCmd)
             {
                 case "help":
-                    response = "Available commands:\r\n  help        - Display this menu\r\n  bio         - Print developer profile description\r\n  skills      - Query technical skills array\r\n  experience  - List work experience data\r\n  hire        - Initiate onboarding sequence\r\n  matrix      - Trigger retro overlay\r\n  sudo rm -rf / - Wipe root partition";
+                    response = "Available commands:\r\n  help        - Display this menu\r\n  bio         - Print developer profile description\r\n  skills      - Query technical skills array\r\n  experience  - List work experience data dynamically\r\n  hire        - Initiate onboarding sequence\r\n  matrix      - Trigger retro overlay\r\n  sudo rm -rf / - Wipe root partition";
                     break;
                 case "bio":
-                    response = "Gao Chong - Senior Full-Stack Engineer\r\n---------------------------------------\r\nSpecialty: High-throughput backend C# microservices, AWS serverless pipelines, and Sitecore enterprise architecture. Survives recursive code traps, deep-dives into log outputs, and builds systems that don't leak memory.";
+                    response = $"Gao Chong - Senior Full-Stack Engineer\r\n---------------------------------------\r\nSpecialty: High-throughput backend C# microservices, AWS serverless pipelines.\r\nBio Summary: {data.Bio.HeroSubtitle}";
                     break;
                 case "skills":
                     response = "System Skills Query Results:\r\n  * Languages: C#, Python, JavaScript, Dart, SQL, HTML/CSS\r\n  * Frameworks: ASP.NET Core MVC, React, Flutter, Sitecore (10.3/10.4)\r\n  * Cloud: AWS Lambda, Rekognition, DynamoDB, Cognito, S3\r\n  * Tools: ILSpy, Log Analyzer, Git, Docker, IIS";
                     break;
                 case "experience":
-                    response = "Work History:\r\n  [1] Full-Stack & Cloud Integration Engineer\r\n      Built Smart Shelf System with Flutter, Dart, C#, and AWS Rekognition/Lambda.\r\n  [2] Enterprise Platform Debugger (Sitecore 10.3/10.4)\r\n      Mitigated production log-flooding, decompiled black-box DLLs using ILSpy.";
+                    var sb = new StringBuilder();
+                    sb.AppendLine("Dynamic Work History Query Results:");
+                    sb.AppendLine("===================================");
+                    for (int i = 0; i < data.Experiences.Count; i++)
+                    {
+                        var exp = data.Experiences[i];
+                        sb.AppendLine($"  [{i + 1}] {exp.Role} at {exp.Company}");
+                        sb.AppendLine($"      Duration: {exp.Duration}");
+                        if (exp.BulletPoints.Count > 0)
+                        {
+                            sb.AppendLine($"      Key: {exp.BulletPoints[0]}");
+                        }
+                        sb.AppendLine();
+                    }
+                    response = sb.ToString();
                     break;
                 case "hire":
                     response = "[SUCCESS] Dispatching interview invite... \r\nSystem Response: 'Salary expectation satisfies developer.OnboardingRequested = true;'\r\nLooking forward to speaking with you!";
@@ -53,63 +86,35 @@ namespace GaoChongPortfolio.Controllers
             return Json(new { output = response });
         }
 
-        private ResumeViewModel GetResumeData()
+        private List<SkillGroup> GetSkillGroups()
         {
-            return new ResumeViewModel
+            return new List<SkillGroup>
             {
-                Experiences = new List<ExperienceItem>
+                new SkillGroup
                 {
-                    new ExperienceItem
-                    {
-                        Company = "Smart Retail Solutions Inc.",
-                        Role = "Full-Stack & Cloud Integration Engineer",
-                        Duration = "2024 - Present",
-                        BulletPoints = new List<string>
-                        {
-                            "Designed and implemented a real-time Smart Shelf System combining Flutter/Dart mobile apps with an ASP.NET Core backend.",
-                            "Leveraged AWS Rekognition for item detection and OCR, DynamoDB for serverless storage, and Cognito for authorization.",
-                            "Developed high-efficiency serverless endpoints in AWS Lambda to process live image captures under 200ms."
-                        },
-                        HumorousTakeaway = "No CPU pins were bent in the physical assembly of the edge sensors. Rekognition accurately tells Cheetos apart from Doritos."
-                    },
-                    new ExperienceItem
-                    {
-                        Company = "Enterprise Core Diagnostics",
-                        Role = "Enterprise Platform Debugger & Architect",
-                        Duration = "2022 - 2024",
-                        BulletPoints = new List<string>
-                        {
-                            "Provided L3 technical support and platform diagnostics for enterprise Sitecore 10.3/10.4 configurations.",
-                            "Decompiled and debugged proprietary assemblies using ILSpy to identify memory leaks and logic flaws.",
-                            "Built customized tools based on Log Analyzer to mitigate production log-flooding, reducing disk writes by 75%."
-                        },
-                        HumorousTakeaway = "Sitecore logs are like a fantasy novel: long, confusing, and full of unexpected stack traces. ILSpy was my sword."
-                    }
+                    CategoryName = "Languages",
+                    Skills = new List<string> { "C#", "Python", "JavaScript", "TypeScript", "Dart", "SQL", "HTML5/CSS3" }
                 },
-                SkillGroups = new List<SkillGroup>
+                new SkillGroup
                 {
-                    new SkillGroup
-                    {
-                        CategoryName = "Languages",
-                        Skills = new List<string> { "C#", "Python", "JavaScript", "TypeScript", "Dart", "SQL", "HTML5/CSS3" }
-                    },
-                    new SkillGroup
-                    {
-                        CategoryName = "Frameworks & Architectures",
-                        Skills = new List<string> { "ASP.NET Core MVC", "React", "Flutter", "Sitecore 10.x", "Entity Framework Core", "RESTful APIs" }
-                    },
-                    new SkillGroup
-                    {
-                        CategoryName = "Cloud & Devops",
-                        Skills = new List<string> { "AWS (Lambda, Rekognition, Cognito, DynamoDB, S3)", "Docker", "Git", "IIS", "CI/CD Pipelines" }
-                    }
+                    CategoryName = "Frameworks & Architectures",
+                    Skills = new List<string> { "ASP.NET Core MVC", "React", "Flutter", "Sitecore 10.x", "Entity Framework Core", "RESTful APIs" }
                 },
-                Certifications = new List<string>
+                new SkillGroup
                 {
-                    "AWS Certified Solutions Architect – Associate",
-                    "Sitecore 10 .NET Developer Certification",
-                    "Professional Semicolon Restorer (Self-Certified)"
+                    CategoryName = "Cloud & Devops",
+                    Skills = new List<string> { "AWS (Lambda, Rekognition, Cognito, DynamoDB, S3)", "Docker", "Git", "IIS", "CI/CD Pipelines" }
                 }
+            };
+        }
+
+        private List<string> GetCertifications()
+        {
+            return new List<string>
+            {
+                "AWS Certified Solutions Architect – Associate",
+                "Sitecore 10 .NET Developer Certification",
+                "Professional Semicolon Restorer (Self-Certified)"
             };
         }
     }

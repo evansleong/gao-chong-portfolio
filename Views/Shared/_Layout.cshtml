@@ -161,6 +161,10 @@
                 <a href="/Resume" class="text-slate-300 hover:text-white hover:underline transition">Resume &amp; Terminal</a>
                 <a href="/Gallery" class="text-slate-300 hover:text-white hover:underline transition">Projects &amp; Gallery</a>
                 <a href="/Contact" class="text-slate-300 hover:text-white hover:underline transition">Contact</a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a href="/Admin" class="text-indigo-400 hover:text-indigo-300 hover:underline transition font-mono">[Admin Dashboard]</a>
+                }
             </div>
 
             <!-- System Action Controls (Theme and Easter Egg) -->
@@ -209,6 +213,7 @@
             <div class="text-xs text-slate-500 md:text-right">
                 <div>Environment: <span class="text-emerald-400">Production</span></div>
                 <div>Status: <span class="text-emerald-400">99.8% Coolant Level</span></div>
+                <div class="mt-1"><a href="/Admin" class="text-slate-600 hover:text-slate-400 underline font-mono text-[10px]">Console.Admin_Login()</a></div>
             </div>
         </div>
     </footer>

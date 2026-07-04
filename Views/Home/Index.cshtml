@@ -1,3 +1,5 @@
+@model GaoChongPortfolio.Models.BioInfo
+
 @{
     ViewData["Title"] = "Home Gateway";
 }
@@ -13,7 +15,7 @@
             <!-- Witty Greeting Tag -->
             <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-950/40 text-xs font-mono text-indigo-300">
                 <span class="w-2 h-2 rounded-full bg-indigo-400 animate-ping"></span>
-                <span>Console.WriteLine("Hello, World!");</span>
+                <span>@Model.HeroTitle</span>
             </div>
 
             <!-- Main Heading with Typewriter feel -->
@@ -22,7 +24,7 @@
             </h1>
 
             <p class="text-lg sm:text-2xl text-slate-300 font-light leading-relaxed max-w-3xl">
-                I build scalable full-stack applications, untangle chaotic log files, and occasionally build custom PCs without bending the CPU pins.
+                @Model.HeroSubtitle
             </p>
 
             <!-- Action buttons -->
@@ -50,13 +52,13 @@
             </h2>
             <div class="text-slate-300 space-y-4 text-base sm:text-lg leading-relaxed">
                 <p>
-                    I am a full-stack software engineer with a heavy leaning towards robust, production-grade backend architectures, cloud integrations, and clean code. I believe code should not only compile, but be structured in a way that doesn't trigger migraines for future developers.
+                    @Model.BioText1
                 </p>
                 <p>
-                    Over my years of writing code, I have survived countless recursive error loops, hunted down memory leaks in vendor DLL assemblies, and wrangled distributed cloud pipelines. Whether it's managing database deadlocks or building reactive mobile frontends, my approach is methodical, automated, and tested.
+                    @Model.BioText2
                 </p>
                 <p class="text-slate-400 italic text-sm border-l-2 border-indigo-500 pl-4 bg-slate-900/30 py-2 rounded-r">
-                    Humorous Note: I am certified in reading sitecore logs without falling asleep, and I've successfully deployed code to production on a Friday without causing server explosions.
+                    @Model.BioHumorousNote
                 </p>
             </div>
         </div>
@@ -74,27 +76,27 @@
                 <div class="space-y-4 text-sm font-mono">
                     <div class="flex justify-between border-b border-slate-800/80 pb-2">
                         <span class="text-slate-400">Coffee Intake:</span>
-                        <span class="text-slate-200">1.8 Liters/Day</span>
+                        <span class="text-slate-200">@Model.CoffeeIntake</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800/80 pb-2">
                         <span class="text-slate-400">CPU Pins Bent:</span>
-                        <span class="text-emerald-400">0 Pins (Optimal)</span>
+                        <span class="text-emerald-400">@Model.CpuPinsBent</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800/80 pb-2">
                         <span class="text-slate-400">Preferred Editor:</span>
-                        <span class="text-slate-200">VS Code / Rider</span>
+                        <span class="text-slate-200">@Model.PreferredEditor</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800/80 pb-2">
                         <span class="text-slate-400">OS Host:</span>
-                        <span class="text-slate-200">Windows/Linux WSL</span>
+                        <span class="text-slate-200">@Model.OsHost</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800/80 pb-2">
                         <span class="text-slate-400">Production Hotfixes:</span>
-                        <span class="text-yellow-400">0 (Tested locally!)</span>
+                        <span class="text-yellow-400">@Model.ProductionHotfixes</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-400">Humor Level:</span>
-                        <span class="text-slate-200">Strictly Catch-Block</span>
+                        <span class="text-slate-200">@Model.HumorLevel</span>
                     </div>
                 </div>
             </div>
