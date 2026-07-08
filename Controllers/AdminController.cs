@@ -93,7 +93,7 @@ namespace GaoChongPortfolio.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public IActionResult EditBio(BioInfo model)
+        public async Task<IActionResult> EditBio(BioInfo model, IFormFile? AvatarFile)
         {
             if (!ModelState.IsValid)
             {
@@ -102,10 +102,54 @@ namespace GaoChongPortfolio.Controllers
             }
 
             var data = _portfolioService.GetData();
+
+            if (AvatarFile != null && AvatarFile.Length > 0)
+            {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg" };
+                var extension = Path.GetExtension(AvatarFile.FileName).ToLower();
+
+                if (!allowedExtensions.Contains(extension))
+                {
+                    TempData["Error"] = "Avatar upload failed. Invalid file format.";
+                    return RedirectToAction("Index");
+                }
+
+                string uploadsDir;
+                if (Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID") != null)
+                {
+                    uploadsDir = "/home/site/uploads";
+                }
+                else
+                {
+                    var rootPath = _env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot");
+                    uploadsDir = Path.Combine(rootPath, "images", "uploads");
+                }
+
+                if (!Directory.Exists(uploadsDir))
+                {
+                    Directory.CreateDirectory(uploadsDir);
+                }
+
+                var uniqueName = $"avatar-{Guid.NewGuid().ToString().Substring(0, 8)}{extension}";
+                var filePath = Path.Combine(uploadsDir, uniqueName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await AvatarFile.CopyToAsync(stream);
+                }
+
+                model.AvatarUrl = $"/images/uploads/{uniqueName}";
+            }
+            else
+            {
+                // Preserve current AvatarUrl if not uploading a new file
+                model.AvatarUrl = data.Bio.AvatarUrl;
+            }
+
             data.Bio = model;
             _portfolioService.SaveData(data);
 
-            TempData["Success"] = "Bio database metrics updated successfully!";
+            TempData["Success"] = "Bio database metrics and avatar updated successfully!";
             return RedirectToAction("Index");
         }
 

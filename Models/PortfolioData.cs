@@ -16,6 +16,7 @@ namespace GaoChongPortfolio.Models
         public string BioText1 { get; set; } = "I am a full-stack software engineer with a heavy leaning towards robust, production-grade backend architectures, cloud integrations, and clean code. I believe code should not only compile, but be structured in a way that doesn't trigger migraines for future developers.";
         public string BioText2 { get; set; } = "Over my years of writing code, I have survived countless recursive error loops, hunted down memory leaks in vendor DLL assemblies, and wrangled distributed cloud pipelines. Whether it's managing database deadlocks or building reactive mobile frontends, my approach is methodical, automated, and tested.";
         public string BioHumorousNote { get; set; } = "Humorous Note: I am certified in reading sitecore logs without falling asleep, and I've successfully deployed code to production on a Friday without causing server explosions.";
+        public string AvatarUrl { get; set; } = string.Empty;
         
         // Stats
         public string CoffeeIntake { get; set; } = "1.8 Liters/Day";
