@@ -93,7 +93,7 @@ namespace GaoChongPortfolio.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditBio(BioInfo model, IFormFile? AvatarFile)
+        public async Task<IActionResult> EditBio([Bind(Prefix = "Bio")] BioInfo model, IFormFile? AvatarFile)
         {
             if (!ModelState.IsValid)
             {

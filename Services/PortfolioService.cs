@@ -49,11 +49,22 @@ namespace GaoChongPortfolio.Services
                 {
                     var json = File.ReadAllText(_filePath);
                     var data = JsonSerializer.Deserialize<PortfolioData>(json);
-                    return data ?? SeedDefaultData();
+                    
+                    if (data == null)
+                    {
+                        return SeedDefaultData();
+                    }
+
+                    // Enforce non-null properties to prevent NullReferenceExceptions in views
+                    if (data.Bio == null) data.Bio = new BioInfo();
+                    if (data.Experiences == null) data.Experiences = new List<ExperienceItem>();
+                    if (data.Projects == null) data.Projects = new List<ProjectItem>();
+
+                    return data;
                 }
                 catch
                 {
-                    // Fallback to defaults if file is corrupted
+                    // Fallback to defaults if file is corrupted or unreadable
                     return SeedDefaultData();
                 }
             }
